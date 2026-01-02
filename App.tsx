@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { User } from './types.ts';
 import { supabase } from './services/supabase.ts';
 
@@ -18,15 +17,20 @@ const App: React.FC = () => {
   useEffect(() => {
     // Check initial session
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email || '',
-          name: session.user.user_metadata?.full_name || 'User'
-        });
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email || '',
+            name: session.user.user_metadata?.full_name || 'User'
+          });
+        }
+      } catch (err) {
+        console.error("Auth session check failed:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     checkSession();
@@ -44,18 +48,27 @@ const App: React.FC = () => {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-spin h-10 w-10 border-4 border-indigo-600 border-t-transparent rounded-full"></div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin h-10 w-10 border-4 border-indigo-600 border-t-transparent rounded-full"></div>
+          <p className="text-slate-400 text-sm font-medium animate-pulse">Waking up Lumina...</p>
+        </div>
       </div>
     );
   }
@@ -65,31 +78,31 @@ const App: React.FC = () => {
       <Routes>
         <Route 
           path="/" 
-          element={user ? <Navigate to="/dashboard" /> : <Landing />} 
+          element={user ? <Navigate to="/dashboard" replace /> : <Landing />} 
         />
         
         <Route 
           path="/login" 
-          element={user ? <Navigate to="/dashboard" /> : <Login />} 
+          element={user ? <Navigate to="/dashboard" replace /> : <Login />} 
         />
         
         <Route 
           path="/signup" 
-          element={user ? <Navigate to="/dashboard" /> : <Signup />} 
+          element={user ? <Navigate to="/dashboard" replace /> : <Signup />} 
         />
         
         <Route 
           path="/dashboard" 
-          element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} 
+          element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
         />
         
         <Route 
           path="/editor/:id" 
-          element={user ? <EntryEditor user={user} /> : <Navigate to="/login" />} 
+          element={user ? <EntryEditor user={user} /> : <Navigate to="/login" replace />} 
         />
 
         {/* Catch-all */}
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
