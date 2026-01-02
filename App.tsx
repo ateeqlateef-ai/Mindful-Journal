@@ -1,15 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { User } from './types';
-import { supabase } from './services/supabase';
+import { User } from './types.ts';
+import { supabase } from './services/supabase.ts';
 
 // Pages
-import { Landing } from './pages/Landing';
-import { Login } from './pages/Login';
-import { Signup } from './pages/Signup';
-import { Dashboard } from './pages/Dashboard';
-import { EntryEditor } from './pages/EntryEditor';
+import { Landing } from './pages/Landing.tsx';
+import { Login } from './pages/Login.tsx';
+import { Signup } from './pages/Signup.tsx';
+import { Dashboard } from './pages/Dashboard.tsx';
+import { EntryEditor } from './pages/EntryEditor.tsx';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

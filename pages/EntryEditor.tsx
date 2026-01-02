@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { User, JournalEntry } from '../types';
-import { SupabaseService } from '../services/supabase';
-import { Button } from '../components/Button';
-import { getAIReflection } from '../services/gemini';
+import { User, JournalEntry } from '../types.ts';
+import { SupabaseService } from '../services/supabase.ts';
+import { Button } from '../components/Button.tsx';
+import { getAIReflection } from '../services/gemini.ts';
 
 interface EntryEditorProps {
   user: User;
@@ -46,7 +46,7 @@ export const EntryEditor: React.FC<EntryEditorProps> = ({ user }) => {
       const entryData: Partial<JournalEntry> = {
         title,
         content,
-        date: id === 'new' ? now : undefined, // Keep original date if editing
+        date: id === 'new' ? now : undefined, 
         aiReflection: reflectionData ? reflectionData.reflection : aiReflection,
         mood: reflectionData ? reflectionData.mood : mood
       };

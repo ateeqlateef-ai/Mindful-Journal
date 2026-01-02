@@ -1,6 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js';
-import { JournalEntry } from '../types';
+import { JournalEntry } from '../types.ts';
 
 const SUPABASE_URL = 'https://piruvtgmtkgamaejvygb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpcnV2dGdtdGtnYW1hZWp2eWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNTA5OTQsImV4cCI6MjA4MjkyNjk5NH0.yONBBPxzuUoFe9kzZAyFopYGU6DkBCFXU57yrjF8lMc';
@@ -45,7 +45,6 @@ export const SupabaseService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Map frontend camelCase to DB snake_case for the upsert
     const dbData: any = {
       title: entry.title,
       content: entry.content,

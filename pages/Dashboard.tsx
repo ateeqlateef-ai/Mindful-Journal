@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { JournalEntry, User } from '../types';
-import { SupabaseService } from '../services/supabase';
-import { Button } from '../components/Button';
+import { JournalEntry, User } from '../types.ts';
+import { SupabaseService } from '../services/supabase.ts';
+import { Button } from '../components/Button.tsx';
 
 interface DashboardProps {
   user: User;
