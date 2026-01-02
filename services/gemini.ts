@@ -1,8 +1,4 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-
-// Always use a named parameter for the apiKey during initialization
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 /**
  * Generates an AI reflection and mood analysis for a journal entry.
@@ -10,7 +6,9 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
  */
 export async function getAIReflection(content: string): Promise<{ reflection: string; mood: string }> {
   try {
-    // Using responseSchema is the recommended way to get structured JSON output
+    // Initialize inside the function to ensure the API key is current and avoids early initialization errors
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Analyze the following journal entry: "${content}"`,
@@ -34,7 +32,6 @@ export async function getAIReflection(content: string): Promise<{ reflection: st
       },
     });
 
-    // Access the .text property directly to get the response string
     const jsonStr = response.text || "{}";
     let data;
     try {

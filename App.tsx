@@ -46,6 +46,7 @@ const App: React.FC = () => {
       } else {
         setUser(null);
       }
+      setLoading(false);
     });
 
     return () => {
