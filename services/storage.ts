@@ -1,5 +1,5 @@
 
-import { User, JournalEntry } from '../types';
+import { User, JournalEntry } from '../types.ts';
 
 const USERS_KEY = 'lumina_users';
 const ENTRIES_KEY = 'lumina_entries';

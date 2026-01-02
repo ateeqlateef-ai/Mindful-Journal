@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../services/supabase';
-import { Input } from '../components/Input';
-import { Button } from '../components/Button';
+import { supabase } from '../services/supabase.ts';
+import { Input } from '../components/Input.tsx';
+import { Button } from '../components/Button.tsx';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
