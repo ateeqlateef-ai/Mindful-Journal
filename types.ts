@@ -20,3 +20,5 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
 }
+
+export const APP_VERSION = '1.0.0';
