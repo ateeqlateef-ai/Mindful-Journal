@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { JournalEntry } from '../types.ts';
 
@@ -11,34 +10,47 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const mapEntry = (data: any): JournalEntry => ({
   id: data.id,
   userId: data.user_id,
-  title: data.title,
-  content: data.content,
-  date: data.date,
+  title: data.title || '',
+  content: data.content || '',
+  date: data.date || new Date().toISOString(),
   mood: data.mood,
   aiReflection: data.aiReflection,
-  lastModified: data.last_modified,
+  lastModified: data.last_modified || new Date().toISOString(),
 });
 
 export const SupabaseService = {
   async getEntries(): Promise<JournalEntry[]> {
-    const { data, error } = await supabase
-      .from('entries')
-      .select('*')
-      .order('date', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('entries')
+        .select('*')
+        .order('date', { ascending: false });
 
-    if (error) throw error;
-    return (data || []).map(mapEntry);
+      if (error) {
+        console.warn("Supabase fetch error (check if 'entries' table exists):", error.message);
+        return [];
+      }
+      return (data || []).map(mapEntry);
+    } catch (err) {
+      console.error("Failed to fetch entries:", err);
+      return [];
+    }
   },
 
   async getEntryById(id: string): Promise<JournalEntry | null> {
-    const { data, error } = await supabase
-      .from('entries')
-      .select('*')
-      .eq('id', id)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('entries')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-    if (error || !data) return null;
-    return mapEntry(data);
+      if (error || !data) return null;
+      return mapEntry(data);
+    } catch (err) {
+      console.error(`Failed to fetch entry ${id}:`, err);
+      return null;
+    }
   },
 
   async saveEntry(entry: Partial<JournalEntry>): Promise<JournalEntry> {

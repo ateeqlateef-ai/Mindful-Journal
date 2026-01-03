@@ -2,16 +2,14 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 /**
  * Generates an AI reflection and mood analysis for a journal entry.
- * Uses gemini-3-flash-preview as recommended for basic text tasks.
  */
 export async function getAIReflection(content: string): Promise<{ reflection: string; mood: string }> {
   try {
-    // Initialize inside the function to ensure the API key is current and avoids early initialization errors
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Analyze the following journal entry: "${content}"`,
+      contents: `Analyze the following journal entry and provide a reflection: "${content}"`,
       config: {
         systemInstruction: "You are an empathetic personal journal assistant. Provide a brief, supportive reflection (2-3 sentences) and identify the primary mood (one word).",
         responseMimeType: "application/json",
@@ -20,7 +18,7 @@ export async function getAIReflection(content: string): Promise<{ reflection: st
           properties: {
             mood: {
               type: Type.STRING,
-              description: 'The primary mood identified in the entry.',
+              description: 'The primary mood identified.',
             },
             reflection: {
               type: Type.STRING,
@@ -32,24 +30,24 @@ export async function getAIReflection(content: string): Promise<{ reflection: st
       },
     });
 
-    const jsonStr = response.text || "{}";
+    const text = response.text || "{}";
     let data;
     try {
-      data = JSON.parse(jsonStr);
+      data = JSON.parse(text);
     } catch (e) {
-      console.error("Failed to parse AI response:", e);
-      data = { mood: "Neutral", reflection: "Thank you for sharing your thoughts today." };
+      console.error("AI JSON Parse Error:", e);
+      data = { mood: "Thoughtful", reflection: "Thank you for sharing your thoughts." };
     }
 
     return {
-      mood: data.mood || "Neutral",
-      reflection: data.reflection || "Thank you for sharing your thoughts today."
+      mood: data.mood || "Thoughtful",
+      reflection: data.reflection || "Thank you for sharing your thoughts."
     };
   } catch (error) {
     console.error("Gemini AI error:", error);
     return {
-      mood: "Unknown",
-      reflection: "An error occurred while generating AI insights. Your privacy and entry are still safe."
+      mood: "Neutral",
+      reflection: "Your entry has been saved. The AI reflection is currently unavailable, but your words are safe."
     };
   }
 }
