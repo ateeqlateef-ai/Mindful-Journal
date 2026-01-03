@@ -5,7 +5,12 @@ import { GoogleGenAI, Type } from "@google/genai";
  */
 export async function getAIReflection(content: string): Promise<{ reflection: string; mood: string }> {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      throw new Error("Gemini API_KEY is missing. Please set it in your environment variables.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
     
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -47,7 +52,7 @@ export async function getAIReflection(content: string): Promise<{ reflection: st
     console.error("Gemini AI error:", error);
     return {
       mood: "Neutral",
-      reflection: "Your entry has been saved. The AI reflection is currently unavailable, but your words are safe."
+      reflection: "Your entry has been saved. The AI reflection is currently unavailable (check your API key settings), but your words are safe."
     };
   }
 }
